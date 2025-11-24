@@ -43,8 +43,7 @@ def _parse_urls(url_string: str) -> list[str]:
     """Parse a string of URLs separated by newlines or commas into a list."""
     if not url_string:
         return []
-    return [url.strip() for url in re.split(r'[,
-]+', url_string) if url.strip()]
+    return [url.strip() for url in re.split(r'[,\n]+', url_string) if url.strip()]
 
 
 class InternetStateSensor(SensorEntity):
