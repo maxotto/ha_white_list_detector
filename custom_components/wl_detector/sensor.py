@@ -35,7 +35,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    _LOGGER.warning("Setting up sensor platform for wl_detector.")
+    _LOGGER.debug("Setting up sensor platform for wl_detector.")
     client = get_async_client(hass)
     async_add_entities([InternetStateSensor(hass, entry, client)])
 
@@ -72,7 +72,7 @@ class InternetStateSensor(SensorEntity):
         self._global_urls = _parse_urls(entry.data.get(CONF_GLOBAL_URLS, ""))
         self._russia_urls = _parse_urls(entry.data.get(CONF_RUSSIA_URLS, ""))
         self._whitelist_urls = _parse_urls(entry.data.get(CONF_WHITELIST_URLS, ""))
-        _LOGGER.warning(
+        _LOGGER.debug(
             "Sensor Initialized. URLs: Global=%s, Russia=%s, Whitelist=%s",
             self._global_urls,
             self._russia_urls,
@@ -89,7 +89,7 @@ class InternetStateSensor(SensorEntity):
             name="Internet State Detector",
             manufacturer="maxotto",
             model="Network Monitor",
-            sw_version="0.2.12",
+            sw_version="0.3.0",
         )
 
     async def _is_any_url_reachable(self, urls: list[str]) -> bool:
@@ -98,39 +98,39 @@ class InternetStateSensor(SensorEntity):
             return False
             
         for url in urls:
-            _LOGGER.warning("Checking URL: %s", url)
+            _LOGGER.debug("Checking URL: %s", url)
             try:
                 response = await self._client.get(url, timeout=10, follow_redirects=True)
                 if 200 <= response.status_code < 400:
-                    _LOGGER.warning("URL %s is reachable (status code %d).", url, response.status_code)
+                    _LOGGER.debug("URL %s is reachable (status code %d).", url, response.status_code)
                     return True
                 else:
-                    _LOGGER.warning("URL %s returned non-success status: %d", url, response.status_code)
+                    _LOGGER.debug("URL %s returned non-success status: %d", url, response.status_code)
             except httpx.RequestError as err:
-                _LOGGER.warning("Failed to connect to URL %s. Error: %s", url, err)
+                _LOGGER.debug("Failed to connect to URL %s. Error: %s", url, err)
                 continue
-        _LOGGER.warning("No URLs in this list were reachable.")
+        _LOGGER.debug("No URLs in this list were reachable.")
         return False
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor based on the check logic."""
-        _LOGGER.warning("!!! Starting new internet state check !!!")
+        _LOGGER.debug("!!! Starting new internet state check !!!")
         
         old_state = self._attr_native_value  # Store old state
         
-        _LOGGER.warning("--- Checking Global URLs ---")
+        _LOGGER.debug("--- Checking Global URLs ---")
         if await self._is_any_url_reachable(self._global_urls):
             self._attr_native_value = STATE_FULL_ACCESS
         else:
-            _LOGGER.warning("--- Checking Russia URLs ---")
+            _LOGGER.debug("--- Checking Russia URLs ---")
             if await self._is_any_url_reachable(self._russia_urls):
                 self._attr_native_value = STATE_RUSSIA_ONLY
             else:
-                _LOGGER.warning("--- Checking Whitelist URLs ---")
+                _LOGGER.debug("--- Checking Whitelist URLs ---")
                 if await self._is_any_url_reachable(self._whitelist_urls):
                     self._attr_native_value = STATE_WHITELIST_ONLY
                 else:
-                    _LOGGER.warning("--- No URLs reachable at all ---")
+                    _LOGGER.debug("--- No URLs reachable at all ---")
                     self._attr_native_value = STATE_NO_INTERNET
         
         # Log state change
@@ -138,4 +138,4 @@ class InternetStateSensor(SensorEntity):
             _LOGGER.info(
                 f"Internet status changed from '{old_state}' to '{self._attr_native_value}'"
             )
-        _LOGGER.error("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
+        _LOGGER.debug("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
