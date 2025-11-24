@@ -9,5 +9,6 @@
   "config_flow": true,
   "issue_tracker": "",
   "requirements": ["httpx"],
-  "version": "0.2.9"
+  "dependencies": ["device_automation"],
+  "version": "0.2.10"
 }

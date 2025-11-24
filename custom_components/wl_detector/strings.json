@@ -1,0 +1,19 @@
+{
+  "title": "Internet State Detector",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Internet State Detector Configuration"
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "full_access": "Полный доступ к интернету",
+      "russia_only": "Доступ только к российским сайтам",
+      "whitelist_only": "Доступ только к белому списку",
+      "no_internet": "Нет доступа к интернету",
+      "connection_changed": "Статус подключения изменился"
+    }
+  }
+}

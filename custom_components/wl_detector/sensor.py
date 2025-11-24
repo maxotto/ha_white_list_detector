@@ -11,6 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.httpx_client import get_async_client
+from homeassistant.helpers.entity import DeviceInfo # New import
 
 from .const import (
     DOMAIN,
@@ -81,13 +82,15 @@ class InternetStateSensor(SensorEntity):
         self._attr_native_value = None
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return device information to group the entity."""
-        return {
-            "identifiers": {(DOMAIN, self._entry.entry_id)},
-            "name": "Internet State Detector",
-            "manufacturer": "maxotto",
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry.entry_id)},
+            name="Internet State Detector",
+            manufacturer="maxotto",
+            model="Network Monitor",
+            sw_version="0.2.9",
+        )
 
     async def _is_any_url_reachable(self, urls: list[str]) -> bool:
         """Check if any URL in the list is reachable."""
@@ -113,6 +116,8 @@ class InternetStateSensor(SensorEntity):
         """Fetch new state data for the sensor based on the check logic."""
         _LOGGER.warning("!!! Starting new internet state check !!!")
         
+        old_state = self._attr_native_value  # Store old state
+        
         _LOGGER.warning("--- Checking Global URLs ---")
         if await self._is_any_url_reachable(self._global_urls):
             self._attr_native_value = STATE_FULL_ACCESS
@@ -128,4 +133,9 @@ class InternetStateSensor(SensorEntity):
                     _LOGGER.warning("--- No URLs reachable at all ---")
                     self._attr_native_value = STATE_NO_INTERNET
         
+        # Log state change
+        if old_state != self._attr_native_value:
+            _LOGGER.info(
+                f"Internet status changed from '{old_state}' to '{self._attr_native_value}'"
+            )
         _LOGGER.error("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
