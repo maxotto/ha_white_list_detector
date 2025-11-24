@@ -29,13 +29,13 @@ class WlDetectorConfigFlow(ConfigFlow, domain=DOMAIN):
 
         # Schema with textareas for URL lists
         data_schema = vol.Schema({
-            vol.Required(CONF_GLOBAL_URLS): selector.TextSelector(
+            vol.Required(CONF_GLOBAL_URLS, default="https://www.google.com"): selector.TextSelector(
                 selector.TextSelectorConfig(multiline=True),
             ),
-            vol.Required(CONF_RUSSIA_URLS): selector.TextSelector(
+            vol.Required(CONF_RUSSIA_URLS, default="https://ya.ru"): selector.TextSelector(
                 selector.TextSelectorConfig(multiline=True),
             ),
-            vol.Required(CONF_WHITELIST_URLS): selector.TextSelector(
+            vol.Required(CONF_WHITELIST_URLS, default="https://example.com"): selector.TextSelector(
                 selector.TextSelectorConfig(multiline=True),
             ),
         })

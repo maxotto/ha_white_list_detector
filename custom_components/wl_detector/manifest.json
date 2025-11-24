@@ -9,5 +9,5 @@
   "config_flow": true,
   "issue_tracker": "",
   "requirements": ["httpx"],
-  "version": "0.2.5"
+  "version": "0.2.6"
 }
