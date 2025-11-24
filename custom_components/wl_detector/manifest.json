@@ -1,0 +1,13 @@
+{
+  "domain": "wl_detector",
+  "name": "RF white list detector",
+  "codeowners": [
+    "@maxotto"
+  ],
+  "documentation": "",
+  "iot_class": "cloud_polling",
+  "config_flow": true,
+  "issue_tracker": "",
+  "requirements": ["httpx"],
+  "version": "0.1.0"
+}
