@@ -1,0 +1,14 @@
+Регистратор: homeassistant.config_entries
+Источник: config_entries.py:761
+Зафиксировано первый раз: 10:34:52 (1 случай)
+Зафиксировано последний раз: 10:34:52
+
+Error setting up entry Internet State Detector for wl_detector
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/config_entries.py", line 761, in __async_setup_with_context
+    result = await component.async_setup_entry(hass, self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/config/custom_components/wl_detector/__init__.py", line 14, in async_setup_entry
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ConfigEntries' object has no attribute 'async_setup_platforms'. Did you mean: 'async_unload_platforms'?# Пожалуйста, вставьте сюда полный текст ошибки из журнала Home Assistant.
