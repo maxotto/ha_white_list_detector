@@ -136,5 +136,5 @@ async def async_attach_trigger(
 
     state_config = await state_trigger.async_validate_trigger_config(hass, state_config)
     return await state_trigger.async_attach_trigger(
-        hass, state_config, action, trigger_info, platform_type="device"
+        hass, state_config, action, trigger_info
     )
