@@ -89,7 +89,7 @@ class InternetStateSensor(SensorEntity):
             name="Internet State Detector",
             manufacturer="maxotto",
             model="Network Monitor",
-            sw_version="0.2.9",
+            sw_version="0.2.12",
         )
 
     async def _is_any_url_reachable(self, urls: list[str]) -> bool:
