@@ -78,7 +78,7 @@ class InternetStateSensor(SensorEntity):
             self._whitelist_urls,
         )
 
-        self._attr_state = None
+        self._attr_native_value = None
 
     @property
     def device_info(self):
@@ -115,17 +115,17 @@ class InternetStateSensor(SensorEntity):
         
         _LOGGER.warning("--- Checking Global URLs ---")
         if await self._is_any_url_reachable(self._global_urls):
-            self._attr_state = STATE_FULL_ACCESS
+            self._attr_native_value = STATE_FULL_ACCESS
         else:
             _LOGGER.warning("--- Checking Russia URLs ---")
             if await self._is_any_url_reachable(self._russia_urls):
-                self._attr_state = STATE_RUSSIA_ONLY
+                self._attr_native_value = STATE_RUSSIA_ONLY
             else:
                 _LOGGER.warning("--- Checking Whitelist URLs ---")
                 if await self._is_any_url_reachable(self._whitelist_urls):
-                    self._attr_state = STATE_WHITELIST_ONLY
+                    self._attr_native_value = STATE_WHITELIST_ONLY
                 else:
                     _LOGGER.warning("--- No URLs reachable at all ---")
-                    self._attr_state = STATE_NO_INTERNET
+                    self._attr_native_value = STATE_NO_INTERNET
         
-        _LOGGER.error("!!! FINISHED. Internet state updated to: %s !!!", self._attr_state)
+        _LOGGER.error("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
