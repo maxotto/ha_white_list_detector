@@ -1,0 +1,6 @@
+{
+  "name": "Internet State Detector",
+  "render_readme": true,
+  "country": ["RU"],
+  "homeassistant": "2023.1.0"
+}
