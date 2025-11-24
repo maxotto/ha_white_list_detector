@@ -67,31 +67,31 @@ async def async_get_triggers(
         triggers.append({
             **base_trigger,
             CONF_TYPE: TRIGGER_TYPE_FULL_ACCESS,
-            "name": "Полный доступ к интернету",
+
         })
         
         triggers.append({
             **base_trigger,
             CONF_TYPE: TRIGGER_TYPE_RUSSIA_ONLY,
-            "name": "Доступ только к российским сайтам",
+
         })
         
         triggers.append({
             **base_trigger,
             CONF_TYPE: TRIGGER_TYPE_WHITELIST_ONLY,
-            "name": "Доступ только к белому списку",
+
         })
         
         triggers.append({
             **base_trigger,
             CONF_TYPE: TRIGGER_TYPE_NO_INTERNET,
-            "name": "Нет доступа к интернету",
+
         })
         
         triggers.append({
             **base_trigger,
             CONF_TYPE: TRIGGER_TYPE_CONNECTION_CHANGED,
-            "name": "Статус подключения изменился",
+
         })
 
     return triggers

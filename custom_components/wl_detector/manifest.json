@@ -10,5 +10,5 @@
   "issue_tracker": "",
   "requirements": ["httpx"],
   "dependencies": ["device_automation"],
-  "version": "0.2.10"
+  "version": "0.2.11"
 }
