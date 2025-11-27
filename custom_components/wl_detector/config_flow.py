@@ -32,10 +32,10 @@ class WlDetectorConfigFlow(ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_GLOBAL_URLS, default="https://www.google.com"): selector.TextSelector(
                 selector.TextSelectorConfig(multiline=True),
             ),
-            vol.Required(CONF_RUSSIA_URLS, default="https://glav.su"): selector.TextSelector(
+            vol.Required(CONF_RUSSIA_URLS, default="https://kp40.ru"): selector.TextSelector(
                 selector.TextSelectorConfig(multiline=True),
             ),
-            vol.Required(CONF_WHITELIST_URLS, default="http://kremlin.ru/"): selector.TextSelector(
+            vol.Required(CONF_WHITELIST_URLS, default="http://dzen.ru/"): selector.TextSelector(
                 selector.TextSelectorConfig(multiline=True),
             ),
         })

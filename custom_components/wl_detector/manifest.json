@@ -1,6 +1,6 @@
 {
   "domain": "wl_detector",
-  "name": "RF white list detector",
+  "name": "Internet State Detector",
   "codeowners": [
     "@maxotto"
   ],
@@ -10,5 +10,5 @@
   "issue_tracker": "",
   "requirements": ["httpx"],
   "dependencies": ["device_automation"],
-  "version": "0.3.0"
+  "version": "0.3.1"
 }
