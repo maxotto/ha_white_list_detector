@@ -61,7 +61,7 @@ class WlDetectorConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> WlDetectorOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return WlDetectorOptionsFlowHandler(config_entry)
+        return WlDetectorOptionsFlowHandler()
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
