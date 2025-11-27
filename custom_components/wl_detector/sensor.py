@@ -89,7 +89,7 @@ class InternetStateSensor(SensorEntity):
             name="Internet State Detector",
             manufacturer="maxotto",
             model="Network Monitor",
-            sw_version="0.3.1",
+            sw_version="0.3.2",
         )
 
     async def _check_single_url(self, url: str, timeout: float = 5.0) -> bool:
