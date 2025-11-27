@@ -39,6 +39,14 @@ async def async_setup_entry(
     client = get_async_client(hass)
     async_add_entities([InternetStateSensor(hass, entry, client)])
 
+    # Add an update listener that will reload the integration when options are changed
+    entry.add_update_listener(async_update_listener)
+
+
+async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
 
 def _parse_urls(url_string: str) -> list[str]:
     """Parse a string of URLs separated by newlines or commas into a list."""
@@ -69,9 +77,13 @@ class InternetStateSensor(SensorEntity):
         self._client = client
         self._attr_unique_id = f"{entry.entry_id}_internet_state"
 
-        self._global_urls = _parse_urls(entry.data.get(CONF_GLOBAL_URLS, ""))
-        self._russia_urls = _parse_urls(entry.data.get(CONF_RUSSIA_URLS, ""))
-        self._whitelist_urls = _parse_urls(entry.data.get(CONF_WHITELIST_URLS, ""))
+        # Combine data and options, with options taking precedence
+        config = {**entry.data, **entry.options}
+
+        self._global_urls = _parse_urls(config.get(CONF_GLOBAL_URLS, ""))
+        self._russia_urls = _parse_urls(config.get(CONF_RUSSIA_URLS, ""))
+        self._whitelist_urls = _parse_urls(config.get(CONF_WHITELIST_URLS, ""))
+
         _LOGGER.warning(
             "Sensor Initialized. URLs: Global=%s, Russia=%s, Whitelist=%s",
             self._global_urls,
@@ -89,7 +101,7 @@ class InternetStateSensor(SensorEntity):
             name="Internet State Detector",
             manufacturer="maxotto",
             model="Network Monitor",
-            sw_version="0.3.5",
+            sw_version="0.3.6",
         )
 
     async def _check_single_url(self, url: str, timeout: float = 5.0) -> bool:
