@@ -24,7 +24,7 @@ from .const import (
     CONF_WHITELIST_URLS,
 )
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__) 
 
 SCAN_INTERVAL = timedelta(minutes=1)
 
@@ -35,7 +35,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    _LOGGER.debug("Setting up sensor platform for wl_detector.")
+    _LOGGER.info("Setting up sensor platform for wl_detector.")
     client = get_async_client(hass)
     async_add_entities([InternetStateSensor(hass, entry, client)])
 
@@ -72,7 +72,7 @@ class InternetStateSensor(SensorEntity):
         self._global_urls = _parse_urls(entry.data.get(CONF_GLOBAL_URLS, ""))
         self._russia_urls = _parse_urls(entry.data.get(CONF_RUSSIA_URLS, ""))
         self._whitelist_urls = _parse_urls(entry.data.get(CONF_WHITELIST_URLS, ""))
-        _LOGGER.debug(
+        _LOGGER.info(
             "Sensor Initialized. URLs: Global=%s, Russia=%s, Whitelist=%s",
             self._global_urls,
             self._russia_urls,
@@ -94,24 +94,24 @@ class InternetStateSensor(SensorEntity):
 
     async def _check_single_url(self, url: str, timeout: float = 5.0) -> bool:
         """Check a single URL using HEAD request, fallback to GET if HEAD is not supported."""
-        _LOGGER.debug("Checking URL: %s", url)
+        _LOGGER.info("Checking URL: %s", url)
 
         try:
             # First try HEAD request
             response = await self._client.head(url, timeout=httpx.Timeout(timeout, connect=timeout))
             # If HEAD returns status in 200-399 range, the URL is reachable
             if 200 <= response.status_code < 400:
-                _LOGGER.debug("URL %s is reachable via HEAD (status code %d).", url, response.status_code)
+                _LOGGER.info("URL %s is reachable via HEAD (status code %d).", url, response.status_code)
                 return True
         except httpx.RequestError:
             # If HEAD fails, try GET request as fallback
             try:
                 response = await self._client.get(url, timeout=httpx.Timeout(timeout, connect=timeout))
                 if 200 <= response.status_code < 400:
-                    _LOGGER.debug("URL %s is reachable via GET (status code %d).", url, response.status_code)
+                    _LOGGER.info("URL %s is reachable via GET (status code %d).", url, response.status_code)
                     return True
             except httpx.RequestError as err:
-                _LOGGER.debug("Failed to connect to URL %s. Error: %s", url, err)
+                _LOGGER.info("Failed to connect to URL %s. Error: %s", url, err)
 
         return False
 
@@ -131,30 +131,30 @@ class InternetStateSensor(SensorEntity):
             if isinstance(result, bool) and result:
                 return True
             elif isinstance(result, Exception):
-                _LOGGER.debug("Exception during URL checking: %s", result)
+                _LOGGER.info("Exception during URL checking: %s", result)
 
-        _LOGGER.debug("No URLs in this list were reachable.")
+        _LOGGER.info("No URLs in this list were reachable.")
         return False
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor based on the check logic."""
-        _LOGGER.debug("!!! Starting new internet state check !!!")
+        _LOGGER.info("!!! Starting new internet state check !!!")
 
         old_state = self._attr_native_value  # Store old state
 
-        _LOGGER.debug("--- Checking Global URLs ---")
+        _LOGGER.info("--- Checking Global URLs ---")
         if await self._is_any_url_reachable(self._global_urls):
             self._attr_native_value = STATE_FULL_ACCESS
         else:
-            _LOGGER.debug("--- Checking Russia URLs ---")
+            _LOGGER.info("--- Checking Russia URLs ---")
             if await self._is_any_url_reachable(self._russia_urls):
                 self._attr_native_value = STATE_RUSSIA_ONLY
             else:
-                _LOGGER.debug("--- Checking Whitelist URLs ---")
+                _LOGGER.info("--- Checking Whitelist URLs ---")
                 if await self._is_any_url_reachable(self._whitelist_urls):
                     self._attr_native_value = STATE_WHITELIST_ONLY
                 else:
-                    _LOGGER.debug("--- No URLs reachable at all ---")
+                    _LOGGER.info("--- No URLs reachable at all ---")
                     self._attr_native_value = STATE_NO_INTERNET
 
         # Log state change
@@ -162,4 +162,4 @@ class InternetStateSensor(SensorEntity):
             _LOGGER.info(
                 f"Internet status changed from '{old_state}' to '{self._attr_native_value}'"
             )
-        _LOGGER.debug("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
+        _LOGGER.info("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
