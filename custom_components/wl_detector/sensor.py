@@ -89,7 +89,7 @@ class InternetStateSensor(SensorEntity):
             name="Internet State Detector",
             manufacturer="maxotto",
             model="Network Monitor",
-            sw_version="0.3.4",
+            sw_version="0.3.5",
         )
 
     async def _check_single_url(self, url: str, timeout: float = 5.0) -> bool:
@@ -142,24 +142,31 @@ class InternetStateSensor(SensorEntity):
 
         old_state = self._attr_native_value  # Store old state
 
-        _LOGGER.warning("--- Checking Global URLs ---")
-        if await self._is_any_url_reachable(self._global_urls):
+        _LOGGER.warning("--- Checking all URL lists in parallel ---")
+        
+        # Run checks for all lists in parallel
+        global_check, russia_check, whitelist_check = await asyncio.gather(
+            self._is_any_url_reachable(self._global_urls),
+            self._is_any_url_reachable(self._russia_urls),
+            self._is_any_url_reachable(self._whitelist_urls),
+            return_exceptions=True
+        )
+
+        _LOGGER.warning(f"Check results: Global={global_check}, Russia={russia_check}, Whitelist={whitelist_check}")
+
+        # Determine the new state based on the results, maintaining priority
+        if global_check is True:
             self._attr_native_value = STATE_FULL_ACCESS
+        elif russia_check is True:
+            self._attr_native_value = STATE_RUSSIA_ONLY
+        elif whitelist_check is True:
+            self._attr_native_value = STATE_WHITELIST_ONLY
         else:
-            _LOGGER.warning("--- Checking Russia URLs ---")
-            if await self._is_any_url_reachable(self._russia_urls):
-                self._attr_native_value = STATE_RUSSIA_ONLY
-            else:
-                _LOGGER.warning("--- Checking Whitelist URLs ---")
-                if await self._is_any_url_reachable(self._whitelist_urls):
-                    self._attr_native_value = STATE_WHITELIST_ONLY
-                else:
-                    _LOGGER.warning("--- No URLs reachable at all ---")
-                    self._attr_native_value = STATE_NO_INTERNET
+            self._attr_native_value = STATE_NO_INTERNET
 
         # Log state change
         if old_state != self._attr_native_value:
-            _LOGGER.info( # Keep this one as info since it's a state change and important
+            _LOGGER.info(
                 f"Internet status changed from '{old_state}' to '{self._attr_native_value}'"
             )
         _LOGGER.warning("!!! FINISHED. Internet state updated to: %s !!!", self._attr_native_value)
