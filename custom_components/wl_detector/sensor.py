@@ -39,14 +39,6 @@ async def async_setup_entry(
     client = get_async_client(hass)
     async_add_entities([InternetStateSensor(hass, entry, client)])
 
-    # Add an update listener that will reload the integration when options are changed
-    entry.add_update_listener(async_update_listener)
-
-
-async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Handle options update."""
-    await hass.config_entries.async_reload(entry.entry_id)
-
 
 def _parse_urls(url_string: str) -> list[str]:
     """Parse a string of URLs separated by newlines or commas into a list."""
@@ -101,7 +93,7 @@ class InternetStateSensor(SensorEntity):
             name="Internet State Detector",
             manufacturer="maxotto",
             model="Network Monitor",
-            sw_version="0.3.6",
+            sw_version="0.3.7",
         )
 
     async def _check_single_url(self, url: str, timeout: float = 5.0) -> bool:
