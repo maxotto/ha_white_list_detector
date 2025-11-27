@@ -15,10 +15,6 @@ from .const import (
 class WlDetectorOptionsFlowHandler(OptionsFlow):
     """Handle an options flow for wl_detector."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
-
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
